@@ -2,26 +2,13 @@
 #through USPS.
 
 from bs4 import BeautifulSoup
+from send_email import send_email
 import requests
 import time
 
-#traking_id = '123' #through USPS
-traking_id = input('Please provide your tracking id: ')
+traking_id = '9361289697090784589402' #through USPS
+#traking_id = input('Please provide your tracking id: ')
 url = 'https://tools.usps.com/go/TrackConfirmAction?tLabels='
-
-'''tests different "redirect" links
-test_url = f'{url}{traking_id}'
-redirected_links = set()
-while True:
-    r = requests.get(test_url, allow_redirects=False)
-    
-    if test_url in redirected_links: 
-        print(r.status_code)
-        break
-    
-    redirected_links.add(test_url)
-    print(test_url)
-'''
 
 def scrape():
     #create session to pass "header" info.
@@ -45,10 +32,11 @@ def is_delivered():
     delivery_status = scrape()
 
     if delivery_status.lower().find('delivered') != -1:
-        print('your package has been ' + delivery_status.lower())
+        print('Your package has been ' + delivery_status.lower())
+        send_email(delivery_status.lower())
         return True
     else:
-         print('your package is not delivered...')
+         print('Your package is not delivered...')
          return False
 
 #check every minute if "delivered"
