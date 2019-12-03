@@ -6,8 +6,9 @@ from send_email import send_email
 import requests
 import time
 
-traking_id = '9361289697090784589402' #through USPS
-#traking_id = input('Please provide your tracking id: ')
+#9341989697090119754616, 9361289697090784589402
+#traking_id = '123' #through USPS 
+traking_id = input('Please provide your tracking id: ')
 url = 'https://tools.usps.com/go/TrackConfirmAction?tLabels='
 
 def scrape():
@@ -32,8 +33,9 @@ def is_delivered():
     delivery_status = scrape()
 
     if delivery_status.lower().find('delivered') != -1:
-        print('Your package has been ' + delivery_status.lower())
-        send_email(delivery_status.lower())
+        msg = 'Your package has been ' + delivery_status.lower()
+        print(msg)
+        send_email(msg)
         return True
     else:
          print('Your package is not delivered...')
