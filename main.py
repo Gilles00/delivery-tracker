@@ -3,22 +3,19 @@
 
 from bs4 import BeautifulSoup
 from send_email import send_email
-import requests
-import time
+import requests, time, webbrowser
 
-#9341989697090119754616, 9361289697090784589402
-#traking_id = '123' #through USPS 
 traking_id = input('Please provide your tracking id: ')
 url = 'https://tools.usps.com/go/TrackConfirmAction?tLabels='
 
 def scrape():
     #create session to pass "header" info.
-    s = requests.Session()
-    s.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
-    r = s.get(f'{url}{traking_id}')
-    #print(r.status_code)
+    session = requests.Session()
+    session.headers['User-Agent'] = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36'
+    response = session.get(f'{url}{traking_id}')
+    #print(response.status_code)
 
-    soup_obj = BeautifulSoup(r.text, 'html.parser')
+    soup_obj = BeautifulSoup(response.text, 'html.parser')
     #print(soup_obj.prettify())
 
     '''grabs whole "div" class that we are interested in.
@@ -29,18 +26,21 @@ def scrape():
     #grabs specific item we need.
     return soup_obj.find('p', class_='important').text
 
-def is_delivered():
+def is_delivered(counter=''):
     delivery_status = scrape()
 
     if delivery_status.lower().find('delivered') != -1:
         msg = 'Your package has been ' + delivery_status.lower()
         print(msg)
-        send_email(msg)
+        #send_email(msg)
+
+        #open webbroswer showing the "proof" of delivery
+        webbrowser.open_new(f'{url}{traking_id}')
         return True
     else:
          print('Your package is not delivered...')
          return False
 
-#check every minute if "delivered"
+#check every N seconds if "delivered"
 while not is_delivered():
-    time.sleep(60)
+    time.sleep(300)

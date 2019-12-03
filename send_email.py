@@ -5,8 +5,10 @@ def send_email(msg):
     #smtp server details.
     port = 2525
     smtp_server = 'smtp.mailtrap.io'
-    login = '45f79c883f409e'
-    password = '44fb7d6564cf0f'
+
+    #your authentification.
+    login = ''
+    password = ''
     
     #email details.
     sender = 'testmail1@mail.com'
